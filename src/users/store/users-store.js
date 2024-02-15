@@ -7,11 +7,18 @@ const state = {
 }
 
 const loadNextPage = async() => {
-    await loadUsersByPage( state.currentPage + 1);
+    const users = await loadUsersByPage( state.currentPage + 1);
+    if (users.length === 0) return;
+
+    state.currentPage += 1;
+    state.users = users; 
 }
 
 const loadPreviousPage = async() => {
-    throw new Error('no implementado');
+    if ( state.currentPage === 1) return;
+    const users = await loadUsersByPage(state.currentPage - 1);
+    state.currentPage -= 1;
+    state.users = users;
 }
 
 const onUserChanged = () => {
@@ -28,6 +35,15 @@ const reloadPage = async() => {
     onUserChanged,
     reloadPage,
 
-    getUser: () => [...state.users],
+    /**
+     * 
+     * @returns {User[]}
+     */
+    getUsers: () => [...state.users],
+
+    /**
+     * 
+     * @returns {Number}
+     */
     getCurrentPage: () => state.currentPage
  }
